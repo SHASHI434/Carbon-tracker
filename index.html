@@ -1,60 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Carbon Footprint Tracker</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-
 <body>
     <header>
-        <span style="margin-left: 10px;">🌿 HACKTIVATE – Carbon Footprint Tracker</span>
+        <div class="logo">
+            🌱 <span>Hacktivate</span>
+        </div>
+        <button id="darkModeToggle" class="btn">🌙 Toggle Dark Mode</button>
     </header>
 
-    <div class="container">
+    <section class="fade-in form-section">
         <h1>Personal Carbon Footprint Tracker</h1>
-
-        <!-- Dark mode toggle neatly aligned -->
-        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
-            <label for="darkToggle" style="margin: 0; font-weight: 500;">🌙 Enable Dark Mode</label>
-            <input type="checkbox" id="darkToggle">
-        </div>
-
-        <form id="carbon-form">
-            <label for="transport">Transport Mode:</label>
-            <select id="transport" required>
-                <option value="car">Petrol Car</option>
-                <option value="bus">Bus</option>
-                <option value="bike">Bike</option>
+        <form id="carbonForm">
+            <label>Transportation Mode:</label>
+            <select name="transportMode">
+                <option value="car">Car (0.21 kg CO₂e/km)</option>
+                <option value="bus">Bus (0.10 kg CO₂e/km)</option>
+                <option value="bike">Bike (0)</option>
+                <option value="walk">Walk (0)</option>
             </select>
 
-            <label for="distance">Distance Travelled (in km):</label>
-            <input type="number" id="distance" placeholder="Enter distance" required>
+            <label>Distance Traveled (km):</label>
+            <input type="number" name="distance" placeholder="e.g. 20" required>
 
-            <label for="electricity">Electricity Used (in kWh):</label>
-            <input type="number" id="electricity" placeholder="Enter units" required>
-
-            <label for="diet">Diet Type:</label>
-            <select id="diet" required>
-                <option value="veg">Vegetarian</option>
-                <option value="nonveg">Non-Vegetarian</option>
+            <label>Diet Type:</label>
+            <select name="diet">
+                <option value="vegan">Vegan (~2 kg CO₂e/day)</option>
+                <option value="vegetarian">Vegetarian (~3 kg CO₂e/day)</option>
+                <option value="meat">Meat-heavy (~5 kg CO₂e/day)</option>
             </select>
 
-            <button type="submit">Calculate</button>
-            <button type="button" id="reset-button">Reset</button>
+            <label>Shopping Spend ($):</label>
+            <input type="number" name="shopping" placeholder="e.g. 50" required>
+
+            <label>Electricity Used (kWh):</label>
+            <input type="number" name="energy" placeholder="e.g. 10" required>
+            <small>Electricity: ~0.4 kg CO₂e/kWh</small>
+
+            <button type="submit" class="btn">Calculate Footprint</button>
+            <button type="button" id="resetBtn" class="btn reset">Reset</button>
         </form>
+        <div id="result" class="fade-in"></div>
+        <div id="tips" class="fade-in tips"></div>
+    </section>
 
-        <div id="result">
-            <!-- Emission results will appear here -->
-        </div>
+    <section class="fade-in chart-section small-charts">
+        <canvas id="pieChart"></canvas>
+        <canvas id="barChart" style="margin-top:30px;"></canvas>
+    </section>
 
-        <canvas id="emissionChart" width="400" height="300"></canvas>
-    </div>
+    <div id="leaves-container"></div>
 
     <script src="script.js"></script>
 </body>
-
 </html>

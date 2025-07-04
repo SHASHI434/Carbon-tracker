@@ -1,69 +1,117 @@
-let chart = null;
+// Fade-in on scroll
+const faders = document.querySelectorAll('.fade-in');
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if(entry.isIntersecting){
+            entry.target.classList.add('show');
+            observer.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.2 });
+faders.forEach(el => observer.observe(el));
 
-document.getElementById("carbon-form").addEventListener("submit", function (event) {
-    event.preventDefault();
+// Floating leaves + flowers
+const leavesContainer = document.getElementById('leaves-container');
+for(let i=0; i<15; i++) {
+    const leaf = document.createElement('div');
+    leaf.classList.add('leaf');
+    leaf.style.left = Math.random() * 100 + 'vw';
+    leaf.style.animationDuration = (8 + Math.random() * 5) + 's';
+    leaf.style.animationDelay = (Math.random() * 5) + 's';
+    leavesContainer.appendChild(leaf);
+}
+for(let i=0; i<10; i++) {
+    const flower = document.createElement('div');
+    flower.classList.add('flower');
+    flower.style.left = Math.random() * 100 + 'vw';
+    flower.style.animationDuration = (8 + Math.random() * 5) + 's';
+    flower.style.animationDelay = (Math.random() * 5) + 's';
+    leavesContainer.appendChild(flower);
+}
 
-    const transport = document.getElementById("transport").value;
-    const distance = parseFloat(document.getElementById("distance").value) || 0;
-    const electricity = parseFloat(document.getElementById("electricity").value) || 0;
-    const diet = document.getElementById("diet").value;
+// Dark mode toggle
+document.getElementById('darkModeToggle').addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+});
 
-    // Emission factors (in kg CO2 per unit)
-    const transportFactors = {
-        car: 0.192,
-        bus: 0.105,
-        bike: 0.05
-    };
+// Chart.js
+let pieChart, barChart;
+const pieCtx = document.getElementById('pieChart').getContext('2d');
+const barCtx = document.getElementById('barChart').getContext('2d');
 
-    // Calculate emissions
-    const transportEmission = distance * (transportFactors[transport] || 0);
-    const electricityEmission = electricity * 0.92;
-    const foodEmission = (diet === "nonveg") ? 6 : 2.5;
+function getTransportEmission(mode, distance) {
+    const factors = { car: 0.21, bus: 0.1, bike: 0, walk: 0 };
+    return distance * factors[mode];
+}
+function getDietEmission(type) {
+    const factors = { vegan: 2, vegetarian: 3, meat: 5 };
+    return factors[type];
+}
 
-    const totalEmission = transportEmission + electricityEmission + foodEmission;
+const form = document.getElementById('carbonForm');
+const resultDiv = document.getElementById('result');
+const tipsDiv = document.getElementById('tips');
+form.addEventListener('submit', e => {
+    e.preventDefault();
+    const mode = form.transportMode.value;
+    const distance = +form.distance.value;
+    const diet = form.diet.value;
+    const shopping = +form.shopping.value;
+    const energy = +form.energy.value;
 
-    // Display results
-    document.getElementById("result").innerHTML = `
-        <p><strong>Total CO₂ Emission:</strong> ${totalEmission.toFixed(2)} kg/day</p>
-        <ul>
-            <li>Transport: ${transportEmission.toFixed(2)} kg</li>
-            <li>Electricity: ${electricityEmission.toFixed(2)} kg</li>
-            <li>Food: ${foodEmission.toFixed(2)} kg</li>
-        </ul>
-        <p>🌱 Tip: Reduce car usage, save electricity, and eat more plant-based meals to lower your carbon footprint!</p>
+    const transportCO2 = getTransportEmission(mode, distance);
+    const dietCO2 = getDietEmission(diet);
+    const shoppingCO2 = shopping * 0.05;
+    const energyCO2 = energy * 0.4;
+    const total = transportCO2 + dietCO2 + shoppingCO2 + energyCO2;
+
+    resultDiv.textContent = `Your estimated footprint: ${total.toFixed(2)} kg CO₂e.`;
+    tipsDiv.innerHTML = `
+        🚶‍♂️ Try walking or cycling more<br/>
+        🥗 Try plant-based meals<br/>
+        💡 Reduce electricity waste<br/>
+        🛍️ Shop less & sustainably
     `;
+    updateCharts([transportCO2, dietCO2, shoppingCO2, energyCO2]);
+});
 
-    // Draw chart
-    const ctx = document.getElementById('emissionChart').getContext('2d');
-    if (chart) chart.destroy();
-    chart = new Chart(ctx, {
+document.getElementById('resetBtn').addEventListener('click', () => {
+    form.reset();
+    resultDiv.textContent = '';
+    tipsDiv.innerHTML = '';
+    if (pieChart) pieChart.destroy();
+    if (barChart) barChart.destroy();
+});
+
+function updateCharts(data) {
+    if (pieChart) pieChart.destroy();
+    if (barChart) barChart.destroy();
+
+    pieChart = new Chart(pieCtx, {
         type: 'pie',
         data: {
-            labels: ['Transport', 'Electricity', 'Food'],
+            labels: ['Transport', 'Diet', 'Shopping', 'Energy'],
             datasets: [{
-                data: [transportEmission, electricityEmission, foodEmission],
-                backgroundColor: ['#3498db', '#2ecc71', '#f39c12']
+                data: data,
+                backgroundColor: ['#ff8a65', '#4db6ac', '#ba68c8', '#81c784']
+            }]
+        },
+        options: { animation: { animateScale: true } }
+    });
+
+    barChart = new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Transport', 'Diet', 'Shopping', 'Energy'],
+            datasets: [{
+                label: 'kg CO₂e',
+                data: data,
+                backgroundColor: ['#ff8a65', '#4db6ac', '#ba68c8', '#81c784']
             }]
         },
         options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'bottom'
-                }
-            }
+            scales: { y: { beginAtZero: true } },
+            animation: { duration: 1000 }
         }
     });
-});
-
-// Reset button functionality
-document.getElementById("reset-button").addEventListener("click", function () {
-    document.getElementById("carbon-form").reset();
-    document.getElementById("result").innerHTML = "";
-    if (chart) chart.destroy();
-});
-
-// Dark mode toggle
-document.getElementById("darkToggle").addEventListener("change", function () {
-    document.body.classList.toggle("dark", this.checked);
-});
+}
