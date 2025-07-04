@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Footprint Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+    <div class="container">
+        <h1>Personal Carbon Footprint Tracker</h1>
+        <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+            <input type="checkbox" id="darkToggle"> 🌙 Enable Dark Mode
+        </label>
+
+
+        <form id="carbon-form">
+            <label for="transport">Transport Mode:</label>
+            <select id="transport" required>
+                <option value="car">Petrol Car</option>
+                <option value="bus">Bus</option>
+                <option value="bike">Bike</option>
+            </select>
+
+            <label for="distance">Distance Travelled (in km):</label>
+            <input type="number" id="distance" placeholder="Enter distance" required>
+
+            <label for="electricity">Electricity Used (in kWh):</label>
+            <input type="number" id="electricity" placeholder="Enter units" required>
+
+            <label for="diet">Diet Type:</label>
+            <select id="diet" required>
+                <option value="veg">Vegetarian</option>
+                <option value="nonveg">Non-Vegetarian</option>
+            </select>
+            <select id="vehicle-type">
+                <option value="5e07bce0-9c5b-4f58-8b06-374f7d3c35f8">Toyota Prius</option>
+                <option value="3f7b7b41-d44f-4975-8b9c-35cf7f73f0dc">Honda Civic</option>
+            </select>
+
+
+            <button type="submit">Calculate</button>
+            <button type="button" id="reset-button">Reset</button>
+
+        </form>
+
+        <div id="result">
+
+
+            <!-- Emission results will appear here -->
+        </div>
+        <canvas id="emissionChart" width="400" height="300"></canvas>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
