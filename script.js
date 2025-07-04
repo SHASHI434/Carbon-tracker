@@ -4,7 +4,7 @@ async function getTransportEmission(vehicleModelId, distance) {
     const response = await fetch("https://www.carboninterface.com/api/v1/estimates", {
         method: "POST",
         headers: {
-            "Authorization": "Bearer hXoFPrCH3hpdAPmec6FA", // Replace with your actual API key
+            "Authorization": "Bearer hXoFPrCH3hpdAPmec6FA.env", // Replace with your actual API key
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
