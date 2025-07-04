@@ -1,44 +1,24 @@
 let chart = null;
 
-async function getTransportEmission(vehicleModelId, distance) {
-    const response = await fetch("https://www.carboninterface.com/api/v1/estimates", {
-        method: "POST",
-        headers: {
-            "Authorization": "Bearer hXoFPrCH3hpdAPmec6FA.env", // Replace with your actual API key
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            type: "vehicle",
-            distance_unit: "km",
-            distance_value: distance,
-            vehicle_model_id: vehicleModelId
-        })
-    });
-
-    const data = await response.json();
-    return data.data.attributes.carbon_kg;
-}
-
-document.getElementById("carbon-form").addEventListener("submit", async function (event) {
+document.getElementById("carbon-form").addEventListener("submit", function (event) {
     event.preventDefault();
 
+    const transport = document.getElementById("transport").value;
     const distance = parseFloat(document.getElementById("distance").value) || 0;
     const electricity = parseFloat(document.getElementById("electricity").value) || 0;
     const diet = document.getElementById("diet").value;
 
+    // Emission factors (in kg CO2 per unit)
+    const transportFactors = {
+        car: 0.192,
+        bus: 0.105,
+        bike: 0.05
+    };
+
+    // Calculate emissions
+    const transportEmission = distance * (transportFactors[transport] || 0);
     const electricityEmission = electricity * 0.92;
     const foodEmission = (diet === "nonveg") ? 6 : 2.5;
-
-    const vehicleModelId = "5e07bce0-9c5b-4f58-8b06-374f7d3c35f8"; // Example: Toyota Prius
-
-    let transportEmission = 0;
-    try {
-        transportEmission = await getTransportEmission(vehicleModelId, distance);
-    } catch (error) {
-        console.error("Error fetching transport emission:", error);
-        alert("Could not fetch transport emission. Using default value.");
-        transportEmission = distance * 0.192; // fallback
-    }
 
     const totalEmission = transportEmission + electricityEmission + foodEmission;
 
@@ -50,7 +30,7 @@ document.getElementById("carbon-form").addEventListener("submit", async function
             <li>Electricity: ${electricityEmission.toFixed(2)} kg</li>
             <li>Food: ${foodEmission.toFixed(2)} kg</li>
         </ul>
-        <p>🌱 Tip: Reduce car usage, electricity, and meat to lower your footprint!</p>
+        <p>🌱 Tip: Reduce car usage, save electricity, and eat more plant-based meals to lower your carbon footprint!</p>
     `;
 
     // Draw chart

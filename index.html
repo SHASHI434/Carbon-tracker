@@ -7,16 +7,21 @@
     <title>Carbon Footprint Tracker</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 </head>
 
 <body>
+    <header>
+        <span style="margin-left: 10px;">🌿 HACKTIVATE – Carbon Footprint Tracker</span>
+    </header>
+
     <div class="container">
         <h1>Personal Carbon Footprint Tracker</h1>
-        <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
-            <input type="checkbox" id="darkToggle"> 🌙 Enable Dark Mode
-        </label>
 
+        <!-- Dark mode toggle neatly aligned -->
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+            <label for="darkToggle" style="margin: 0; font-weight: 500;">🌙 Enable Dark Mode</label>
+            <input type="checkbox" id="darkToggle">
+        </div>
 
         <form id="carbon-form">
             <label for="transport">Transport Mode:</label>
@@ -37,22 +42,15 @@
                 <option value="veg">Vegetarian</option>
                 <option value="nonveg">Non-Vegetarian</option>
             </select>
-            <select id="vehicle-type">
-                <option value="5e07bce0-9c5b-4f58-8b06-374f7d3c35f8">Toyota Prius</option>
-                <option value="3f7b7b41-d44f-4975-8b9c-35cf7f73f0dc">Honda Civic</option>
-            </select>
-
 
             <button type="submit">Calculate</button>
             <button type="button" id="reset-button">Reset</button>
-
         </form>
 
         <div id="result">
-
-
             <!-- Emission results will appear here -->
         </div>
+
         <canvas id="emissionChart" width="400" height="300"></canvas>
     </div>
 
